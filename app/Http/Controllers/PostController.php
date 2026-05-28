@@ -132,6 +132,12 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         try {
+            if ($post->user_id !== auth()->id()) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
             $this->postService->deletePostById($post->id);
 
             return response()->json([
