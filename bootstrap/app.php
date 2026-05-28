@@ -30,54 +30,44 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         // Failed Validation
         $exceptions->renderable(function (ValidationException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Validation Failed',
-                    'errors' => $e->errors(),
-                ], 422);
-            }
+            return response()->json([
+                'status' => 422,
+                'message' => 'Validation Failed',
+                'errors' => $e->errors(),
+            ], 422);
         });
 
         // Route Model Binding Not Found
         $exceptions->renderable(function (ModelNotFoundException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'Data Not Found',
-                ], 404);
-            }
+            return response()->json([
+                'status' => 404,
+                'message' => 'Data Not Found',
+            ], 404);
         });
 
         // Route Not Found
         $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'Data Not Found',
-                ], 404);
-            }
+            return response()->json([
+                'status' => 404,
+                'message' => 'Data Not Found',
+            ], 404);
         });
 
         // Other HTTP Errors
         $exceptions->renderable(function (HttpException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                $code = $e->getStatusCode();
+            $code = $e->getStatusCode();
 
-                return response()->json([
-                    'status' => $code,
-                    'message' => $e->getMessage() ?: 'HTTP Error',
-                ], $code);
-            }
+            return response()->json([
+                'status' => $code,
+                'message' => $e->getMessage() ?: 'HTTP Error',
+            ], $code);
         });
 
         // Fallback 500 - Unexpected Errors
         $exceptions->renderable(function (Throwable $th, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json([
-                    'status' => 500,
-                    'message' => app()->hasDebugModeEnabled() ? ($th->getMessage() ?: 'Internal Server Error') : 'Internal Server Error',
-                ], 500);
-            }
+            return response()->json([
+                'status' => 500,
+                'message' => app()->hasDebugModeEnabled() ? ($th->getMessage() ?: 'Internal Server Error') : 'Internal Server Error',
+            ], 500);
         });
     })->create();
