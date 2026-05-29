@@ -41,7 +41,14 @@ class PostController extends Controller
      */
     public function create()
     {
-        return 'posts.create';
+        if (! auth()->check()) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
+
+        return response()->json('posts.create');
     }
 
     /**
@@ -98,7 +105,14 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return 'posts.edit';
+        if ($post->user_id !== auth()->id()) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Forbidden',
+            ], 403);
+        }
+
+        return response()->json('posts.edit');
     }
 
     /**
@@ -134,9 +148,9 @@ class PostController extends Controller
         try {
             if ($post->user_id !== auth()->id()) {
                 return response()->json([
-                    'status' => 401,
-                    'message' => 'Unauthorized',
-                ], 401);
+                    'status' => 403,
+                    'message' => 'Forbidden',
+                ], 403);
             }
             $this->postService->deletePostById($post->id);
 
