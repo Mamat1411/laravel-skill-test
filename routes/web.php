@@ -8,9 +8,6 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::get('/posts', [PostController::class, 'index']);
-Route::get('/posts/{post}', [PostController::class, 'show']);
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
@@ -18,6 +15,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/posts', PostController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
 });
+
+Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts/{post}', [PostController::class, 'show']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
