@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -55,6 +57,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 'status' => 404,
                 'message' => 'Data Not Found',
             ], 404);
+        });
+
+        // Unauthenticated
+        $exceptions->renderable(function (AuthenticationException $e, Request $request) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthenticated',
+            ], 401);
+        });
+
+        // Forbidden Access (Authorization)
+        $exceptions->renderable(function (AccessDeniedHttpException $e, Request $request) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Forbidden',
+            ], 403);
         });
 
         // Other HTTP Errors

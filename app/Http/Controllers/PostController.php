@@ -41,7 +41,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return 'posts.create';
     }
 
     /**
@@ -98,7 +98,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return 'posts.edit';
     }
 
     /**
