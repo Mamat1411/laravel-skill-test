@@ -13,6 +13,8 @@ class PublishedScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->where('published_at', '<=', now())->orderBy('published_at', 'desc');
+        $builder->where('published_at', '<=', now())
+            ->where('is_draft', '0')
+            ->orderBy('published_at', 'desc');
     }
 }
